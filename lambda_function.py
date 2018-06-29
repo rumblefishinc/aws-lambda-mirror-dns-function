@@ -28,6 +28,8 @@ from dns.rdatatype import *
 import os
 import sys
 import boto3
+from botocore.config import Config
+
 
 # If you need to use a proxy server to access the Internet then hard code it 
 # the details below, otherwise comment out or remove.
@@ -35,8 +37,14 @@ import boto3
 #os.environ["https_proxy"] = "10.10.10.10:3128"
 #os.environ["no_proxy"] = "169.254.169.254"  # Don't proxy for meta-data service as Lambda  needs to get IAM credentials
 
+config = Config(
+    retries = dict(
+        max_attempts = 10
+    )
+)
+
 # setup the boto3 client to talk to AWS APIs
-route53 = boto3.client('route53')
+route53 = boto3.client('route53', config=config)
 
 
 # Function to create, update, delete records in Route 53
